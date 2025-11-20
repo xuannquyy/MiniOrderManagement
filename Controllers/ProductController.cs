@@ -80,9 +80,15 @@ namespace YourProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> UpdateProduct(int id, UpdateProductDto dto)
         {
+            if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+            if (dto.Price < 0 || dto.Stock < 0)
+            return BadRequest("Price và Stock phải >= 0");
+
             var product = await _context.Products.FindAsync(id);
             if (product == null)
-                return NotFound();
+            return NotFound();
 
             product.Name = dto.Name;
             product.Description = dto.Description;
@@ -90,6 +96,7 @@ namespace YourProject.Controllers
             product.Stock = dto.Stock;
 
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
