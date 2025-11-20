@@ -17,10 +17,7 @@ namespace MiniOrderManagement.Models
 
         [Range(1, int.MaxValue)]
         public int Quantity { get; set; }
-
-        [Column(TypeName = "decimal(18,2)")]
-        [Range(0, double.MaxValue)]
-        public decimal PriceAtOrder { get; set; }  
+        public decimal PriceAtOrder { get; set; }
     }
 }
 

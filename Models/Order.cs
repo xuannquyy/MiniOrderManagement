@@ -7,17 +7,13 @@ namespace MiniOrderManagement.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        public string CustomerId { get; set; } // link to Identity user id for real customers (string)
+        public int CustomerId { get; set; } // FK
+        public Customer Customer { get; set; } // Navigation property
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime OrderDate { get; set; }
+        public string Status { get; set; }
+        public decimal TotalAmount { get; set; }
 
-        [Required, MaxLength(50)]
-        public string Status { get; set; } = "Pending";
-
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal Total { get; set; }
-
-        public List<OrderDetail> OrderDetails { get; set; } = new();
+        public ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }
