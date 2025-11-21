@@ -19,6 +19,8 @@ var configuration = builder.Configuration;
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+// Đăng ký Service
+builder.Services.AddScoped<IOrderService, OrderService>();
 // Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()

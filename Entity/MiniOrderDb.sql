@@ -72,13 +72,13 @@ VALUES
 
 INSERT INTO Customers (Name, Email, Phone, Address)
 VALUES
-(N'Nguy?n Th? H?ng Nhung', 'honggnhungg1605@gmail.com', '0909123456', 'HCM'),
-(N'Nguy?n Th? Ph??ng Th?o', 'phuongthao2005ab@gmail.com', '0912345678', 'Hanoi');
+(N'Nguyễn Thị Hồng Nhung', 'honggnhungg1605@gmail.com', '0909123456', N'TP.HCM'),
+(N'Nguyễn Thị Phương Thảo', 'phuongthao2005ab@gmail.com', '0912345678', N'Hà Nội');
 
 INSERT INTO Products (Name, Price, Description, Stock)
 VALUES
-(N'Bánh ḿ th?t', 25000, N'Bánh ḿ k?p th?t ngon, nóng h?i', 50),
-(N'Ph? ḅ', 40000, N'Ph? ḅ Hà N?i, n??c dùng th?m ngon', 30),
-(N'G?i cu?n', 15000, N'G?i cu?n t??i, ch?m n??c m?m ??c bi?t', 40),
-(N'Cà phê s?a ?á', 20000, N'Cà phê rang xay, ?á l?nh', 60),
-(N'Trà s?a trân châu', 35000, N'Trà s?a th?m, trân châu dai', 50);
+(N'Bánh mì thịt', 25000, N'Bánh mì kẹp thịt ngon, nóng hổi', 50),
+(N'Phở bò', 40000, N'Phở bò Hà Nội, nước dùng thơm ngon', 30),
+(N'Gỏi cuốn', 15000, N'Gỏi cuốn tươi, chấm nước mắm đặc biệt', 40),
+(N'Cà phê sữa đá', 20000, N'Cà phê rang xay, đá lạnh', 60),
+(N'Trà sữa trân châu', 35000, N'Trà sữa thơm, trân châu dai', 50);

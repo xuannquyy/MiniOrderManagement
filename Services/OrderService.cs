@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MiniOrderManagement.Data;
 using MiniOrderManagement.DTOs;
@@ -8,84 +7,108 @@ namespace MiniOrderManagement.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly AppDbContext _db;
-        private readonly IMapper _mapper;
+        private readonly AppDbContext _context;
 
-        public OrderService(AppDbContext db, IMapper mapper)
+        public OrderService(AppDbContext context)
         {
-            _db = db;
-            _mapper = mapper;
+            _context = context;
         }
 
-        public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto)
+        public async Task<Order> CreateOrderAsync(string userId, CreateOrderDto dto)
         {
-            if (dto.Items == null || !dto.Items.Any())
-                throw new ArgumentException("Order must contain at least one item.");
-
-            var products = await _db.Products
-                .Where(p => dto.Items.Select(i => i.ProductId).Contains(p.Id))
-                .ToListAsync();
-
-            // Validate all items exist and stock
-            foreach (var item in dto.Items)
+            // 1. Start Transaction (đảm bảo toàn vẹn dữ liệu)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                var prod = products.FirstOrDefault(p => p.Id == item.ProductId);
-                if (prod == null) throw new KeyNotFoundException($"Product {item.ProductId} not found.");
-                if (item.Quantity <= 0) throw new ArgumentException("Quantity must be > 0.");
-                if (prod.Stock < item.Quantity) throw new InvalidOperationException($"Not enough stock for product {prod.Id}.");
-            }
-
-            var order = new Order
-            {
-                CustomerId = dto.CustomerId,
-                Status = "Pending",
-                CreatedAt = DateTime.UtcNow
-            };
-
-            decimal total = 0m;
-            foreach (var item in dto.Items)
-            {
-                var prod = products.First(p => p.Id == item.ProductId);
-                order.OrderDetails.Add(new OrderDetail
+                var order = new Order
                 {
-                    ProductId = prod.Id,
-                    Quantity = item.Quantity,
-                    PriceAtOrder = prod.Price
-                });
-                prod.Stock -= item.Quantity; // decrease stock
-                total += prod.Price * item.Quantity;
+                    UserId = userId,
+                    OrderDate = DateTime.Now,
+                    Status = "Pending",
+                    OrderDetails = new List<OrderDetail>()
+                };
+
+                decimal totalAmount = 0;
+
+                foreach (var item in dto.Items)
+                {
+                    var product = await _context.Products.FindAsync(item.ProductId);
+                    
+                    // Validate logic backend
+                    if (product == null) throw new Exception($"Product ID {item.ProductId} not found");
+                    if (product.Stock < item.Quantity) throw new Exception($"Product {product.Name} not enough stock");
+
+                    // Trừ tồn kho
+                    product.Stock -= item.Quantity;
+
+                    var detail = new OrderDetail
+                    {
+                        ProductId = product.Id,
+                        Product = product,
+                        Quantity = item.Quantity,
+                        PriceAtOrder = product.Price // Lưu giá tại thời điểm mua
+                    };
+                    
+                    totalAmount += (detail.PriceAtOrder * detail.Quantity);
+                    order.OrderDetails.Add(detail);
+                }
+
+                order.TotalAmount = totalAmount;
+
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return order;
             }
-            order.Total = total;
-
-            _db.Orders.Add(order);
-            await _db.SaveChangesAsync();
-
-            // Load navigation for mapping
-            await _db.Entry(order).Collection(o => o.OrderDetails).LoadAsync();
-            foreach (var od in order.OrderDetails)
-                await _db.Entry(od).Reference(o => o.Product).LoadAsync();
-
-            return _mapper.Map<OrderDto>(order);
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
-        public async Task<OrderDto> GetOrderAsync(int id)
+        public async Task<IEnumerable<OrderDto>> GetUserOrdersAsync(string userId)
         {
-            var order = await _db.Orders
+            var orders = await _context.Orders
                 .Include(o => o.OrderDetails)
                 .ThenInclude(od => od.Product)
-                .FirstOrDefaultAsync(o => o.Id == id);
-            if (order == null) return null;
-            return _mapper.Map<OrderDto>(order);
-        }
-
-        public async Task<List<OrderDto>> GetOrdersByCustomerAsync(string customerId)
-        {
-            var orders = await _db.Orders
-                .Where(o => o.CustomerId == customerId)
-                .Include(o => o.OrderDetails)
-                .ThenInclude(od => od.Product)
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
-            return _mapper.Map<List<OrderDto>>(orders);
+
+            return MapToDto(orders);
+        }
+
+        public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync()
+        {
+            var orders = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            return MapToDto(orders);
+        }
+
+        // Helper function map tay (hoặc dùng AutoMapper nếu em thạo)
+        private List<OrderDto> MapToDto(List<Order> orders)
+        {
+            return orders.Select(o => new OrderDto
+            {
+                Id = o.Id,
+                UserId = o.UserId,
+                OrderDate = o.OrderDate,
+                Status = o.Status,
+                TotalAmount = o.TotalAmount,
+                Details = o.OrderDetails.Select(d => new OrderDetailDto
+                {
+                    ProductId = d.ProductId,
+                    ProductName = d.Product.Name,
+                    Quantity = d.Quantity,
+                    UnitPrice = d.PriceAtOrder
+                }).ToList()
+            }).ToList();
         }
     }
 }

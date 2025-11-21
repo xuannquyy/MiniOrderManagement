@@ -1,11 +1,12 @@
 using MiniOrderManagement.DTOs;
+using MiniOrderManagement.Models;
 
 namespace MiniOrderManagement.Services
 {
     public interface IOrderService
     {
-        Task<OrderDto> CreateOrderAsync(OrderCreateDto dto);
-        Task<OrderDto> GetOrderAsync(int id);
-        Task<List<OrderDto>> GetOrdersByCustomerAsync(string customerId);
+        Task<Order> CreateOrderAsync(string userId, CreateOrderDto dto);
+        Task<IEnumerable<OrderDto>> GetUserOrdersAsync(string userId);
+        Task<IEnumerable<OrderDto>> GetAllOrdersAsync(); // Cho Admin
     }
 }
