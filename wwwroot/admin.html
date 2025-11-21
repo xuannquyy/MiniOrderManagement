@@ -4,289 +4,266 @@
 <meta charset="UTF-8">
 <title>Quản lý sản phẩm (Admin)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    font-family: 'Inter', sans-serif;
-    background: #f0f4ff;
-    min-height: 100vh;
-    padding: 40px;
-    position: relative;
-    overflow-x: hidden;
-  }
-  .container {
-    position: relative;
-    z-index: 10;
-    max-width: 1100px;
-    margin: 0 auto;
-    background: white;
-    padding: 40px 45px;
-    border-radius: 26px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-  }
-  h1 { font-size: 34px; font-weight: 700; margin-bottom: 25px; color: #111; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+        font-family: 'Inter', sans-serif; 
+        background: #F3F4F6; 
+        color: #1F2937;
+        padding: 40px 20px; 
+        min-height: 100vh;
+    }
 
-  .alert {
-    padding: 14px 18px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    font-weight: 500;
-  }
-  .alert-success { background:#ECFDF5; color:#059669; border:1px solid #86EFAC; }
-  .alert-error { background:#E0E7FF; color:#4F46E5; border:1px solid #C7D2FE; }
+    .container { 
+        max-width: 1000px; 
+        margin: 0 auto; 
+        background: white; 
+        padding: 30px; 
+        border-radius: 16px; 
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
+    }
 
-  .form-box {
-    background:#F8FAFC;
-    padding: 25px;
-    border-radius: 20px;
-    margin-bottom: 35px;
-  }
-  label { display:block; margin-bottom:8px; font-weight:600; color:#374151; }
-  input, textarea {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid #E2E8F0;
-    border-radius: 14px;
-    background: white;
-    margin-bottom: 18px;
-    font-size: 15px;
-  }
-  button {
-    padding: 14px 22px;
-    background:#4F46E5;
-    color:white;
-    border:none;
-    font-size:16px;
-    border-radius:14px;
-    cursor:pointer;
-    box-shadow:0 6px 20px rgba(79,70,229,0.45);
-    transition:0.25s;
-  }
-  button:hover { background:#4338CA; transform:translateY(-2px); }
+    h1 { 
+        font-size: 24px; 
+        color: #111; 
+        margin-bottom: 25px; 
+        display: inline-block; 
+    }
 
-  table { width:100%; margin-top:20px; border-collapse:collapse; }
-  th, td { padding: 14px; border-bottom:1px solid #eaeaea; text-align:left; }
-  th { background:#E0E7FF; font-weight:700; }
+    #logoutBtn { 
+        float: right; 
+        background: #EF4444; 
+        color: white; 
+        padding: 10px 20px; 
+        border: none; 
+        border-radius: 8px; 
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    #logoutBtn:hover { background: #DC2626; }
 
-  td .btn-edit, td .btn-delete {
-    display: inline-block; padding: 8px 0; width: 56px;
-    border-radius: 12px; font-size: 13px; font-weight: 600;
-    text-align: center; margin: 0 6px; cursor: pointer; transition: all 0.2s;
-  }
-  td .btn-edit   { background:#6366F1; color:white; }
-  td .btn-delete { background:#EF4444; color:white; }
-  td .btn-edit:hover   { background:#4F46E5; }
-  td .btn-delete:hover { background:#DC2626; }
+    #inputForm {
+        display: grid;
+        grid-template-columns: 1fr 1fr; 
+        gap: 15px;
+        background: #F9FAFB;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        border: 1px solid #E5E7EB;
+    }
 
-  #accessDenied {
-    padding: 30px;
-    background:#E0E7FF;
-    border: 1px solid #C7D2FE;
-    color:#4F46E5;
-    border-radius:20px;
-    font-size:18px;
-    display:none;
-  }
+    input, textarea { 
+        width: 100%; 
+        padding: 12px; 
+        border: 1px solid #D1D5DB; 
+        border-radius: 8px; 
+        font-family: inherit;
+        font-size: 14px; 
+        outline: none;
+        transition: border-color 0.2s;
+    }
 
-  #logoutBtn {
-    float:right;
-    background:#4F46E5;
-    margin-top:-50px;
-  }
+    input:focus, textarea:focus { 
+        border-color: #4F46E5; 
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    #desc { 
+        grid-column: span 2; 
+        resize: vertical; 
+        min-height: 80px;
+    }
+
+    #inputForm button { 
+        grid-column: span 1; 
+        padding: 12px; 
+        border: none; 
+        border-radius: 8px; 
+        font-weight: 600; 
+        cursor: pointer; 
+        transition: 0.2s;
+    }
+
+    #inputForm button:first-of-type {
+        background: #4F46E5; 
+        color: white;
+    }
+    #inputForm button:first-of-type:hover { background: #4338CA; }
+
+    #inputForm button:last-of-type {
+        background: #9CA3AF !important; 
+        color: white;
+    }
+    #inputForm button:last-of-type:hover { background: #6B7280 !important; }
+
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 10px; 
+    }
+
+    th { 
+        background: #F3F4F6; 
+        padding: 12px; 
+        text-align: left; 
+        font-weight: 700; 
+        color: #374151; 
+        border-bottom: 2px solid #E5E7EB;
+    }
+
+    td { 
+        padding: 12px; 
+        border-bottom: 1px solid #F3F4F6; 
+        color: #4B5563;
+    }
+
+    tr:hover { background-color: #F9FAFB; }
+
+    td button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        color: white;
+        background: #3B82F6; 
+        transition: 0.2s;
+        margin-right: 5px;
+    }
+    td button:hover { background: #2563EB; }
+
+    .btn-del { 
+        background: #EF4444 !important; 
+    }
+    .btn-del:hover { background: #DC2626 !important; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <button id="logoutBtn" onclick="logout()">Đăng xuất</button>
-
-  <h1>Quản lý sản phẩm</h1>
-
-  <div id="accessDenied">Bạn không có quyền truy cập trang Admin.</div>
-
-  <div id="adminPanel" style="display:none;">
-    <div id="alert"></div>
-
-    <div class="form-box">
-      <h2 id="formTitle">Thêm sản phẩm mới</h2>
-      <input type="hidden" id="productId">
-      <label>Tên sản phẩm</label>
-      <input id="name">
-      <label>Giá</label>
-      <input id="price" type="number">
-      <label>Mô tả</label>
-      <textarea id="description" rows="3"></textarea>
-      <button onclick="saveProduct()" id="saveBtn">Thêm sản phẩm</button>
-      <button onclick="resetForm()" id="cancelBtn" style="display:none; background:#6B7280;">Huỷ</button>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Tên sản phẩm</th>
-          <th>Giá</th>
-          <th>Mô tả</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody id="productList"></tbody>
-    </table>
+  <button id="logoutBtn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+  <h1>Admin Panel - Sản phẩm</h1>
+  
+  <div id="inputForm">
+    <input type="hidden" id="id">
+    <input id="name" placeholder="Tên sản phẩm">
+    <input id="price" type="number" placeholder="Giá (VNĐ)">
+    <input id="stock" type="number" placeholder="Số lượng tồn kho">
+    <textarea id="desc" placeholder="Mô tả sản phẩm"></textarea>
+    
+    <button onclick="saveProduct()"><i class="fa-solid fa-save"></i> Lưu sản phẩm</button>
+    <button onclick="resetForm()"><i class="fa-solid fa-rotate-left"></i> Hủy</button>
   </div>
+
+  <table>
+    <thead><tr><th>ID</th><th>Tên sản phẩm</th><th>Giá</th><th>Kho</th><th>Hành động</th></tr></thead>
+    <tbody id="list"></tbody>
+  </table>
 </div>
 
 <script>
 const API_URL = "https://localhost:5058/api";
 const token = localStorage.getItem("token");
 
-function logout() {
-  localStorage.clear();
-  location.href = "login.html";
+function logout() { localStorage.clear(); location.href = "login.html"; }
+
+function parseJwt(token) {
+    try {
+        return JSON.parse(decodeURIComponent(window.atob(token.split('.')[1]).replace(/-/g, '+').replace(/_/g, '/').split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+    } catch (e) { return null; }
 }
 
-function showAlert(msg, type="error") {
-  document.getElementById("alert").innerHTML =
-    `<div class="alert alert-${type}">${msg}</div>`;
-  setTimeout(() => document.getElementById("alert").innerHTML = "", 3000);
+(function checkAccess() {
+    if (!token) return logout();
+    const decoded = parseJwt(token);
+    const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || decoded["role"];
+    if (role !== "Admin") {
+        alert("Bạn không phải Admin!");
+        location.href = "order.html";
+    } else {
+        loadProducts();
+    }
+})();
+
+async function loadProducts() {
+    const res = await fetch(`${API_URL}/products`);
+    const data = await res.json();
+    const html = data.map(p => `
+        <tr>
+            <td>#${p.id}</td>
+            <td><strong>${p.name}</strong></td>
+            <td>${p.price}</td>
+            <td>${p.stock}</td>
+            <td>
+                <button onclick="edit(${p.id})"><i class="fa-solid fa-pen"></i> Sửa</button>
+                <button class="btn-del" onclick="del(${p.id})"><i class="fa-solid fa-trash"></i> Xóa</button>
+            </td>
+        </tr>
+    `).join('');
+    document.getElementById("list").innerHTML = html;
 }
 
-// Kiểm tra quyền admin
-async function checkAccess() {
-  if (!token) return showDenied();
+async function saveProduct() {
+    const id = document.getElementById("id").value;
+    const payload = {
+        name: document.getElementById("name").value,
+        price: Number(document.getElementById("price").value),
+        stock: Number(document.getElementById("stock").value),
+        description: document.getElementById("desc").value
+    };
 
-  try {
-    const res = await fetch(`${API_URL}/auth/profile`, {
-      headers: { Authorization: `Bearer ${token}` }
+    const method = id ? "PUT" : "POST";
+    const url = id ? `${API_URL}/products/${id}` : `${API_URL}/products`;
+
+    const res = await fetch(url, {
+        method: method,
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify(payload)
     });
 
-    if (res.status === 401) return logout();
-    if (!res.ok) throw new Error();
+    if(res.ok) {
+        alert("Thành công!");
+        resetForm();
+        loadProducts();
+    } else {
+        alert("Lỗi lưu dữ liệu");
+    }
+}
 
-    const data = await res.json();
-    if ((data.role || "").toLowerCase() !== "admin") return showDenied();
-
-    document.getElementById("adminPanel").style.display = "block";
+async function del(id) {
+    if(!confirm("Xóa nhé?")) return;
+    await fetch(`${API_URL}/products/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+    });
     loadProducts();
-  } catch {
-    showDenied();
-  }
 }
 
-function showDenied() {
-  document.getElementById("accessDenied").style.display = "block";
-  document.getElementById("adminPanel").style.display = "none";
+async function edit(id) {
+    const res = await fetch(`${API_URL}/products/${id}`);
+    const p = await res.json();
+    document.getElementById("id").value = p.id;
+    document.getElementById("name").value = p.name;
+    document.getElementById("price").value = p.price;
+    document.getElementById("stock").value = p.stock;
+    document.getElementById("desc").value = p.description;
 }
 
-// Load sản phẩm
-async function loadProducts() {
-  const res = await fetch(`${API_URL}/products`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
-  if (res.status === 401) return logout();
-
-  const products = await res.json().catch(() => []);
-  const tbody = document.getElementById("productList");
-  tbody.innerHTML = "";
-
-  products.forEach(p => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${p.id}</td>
-      <td>${p.name || "Không có tên"}</td>
-      <td>${p.price?.toLocaleString() || p.price}đ</td>
-      <td>${(p.description || "").substring(0,80)}${(p.description || "").length>80?"...":""}</td>
-      <td>
-        <span class="btn-edit" onclick="editProduct(${p.id})">Sửa</span>
-        <span class="btn-delete" onclick="deleteProduct(${p.id})">Xóa</span>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-// Edit sản phẩm
-async function editProduct(id) {
-  const res = await fetch(`${API_URL}/products/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  if (res.status === 401) return logout();
-
-  const p = await res.json();
-
-  document.getElementById("productId").value = p.id;
-  document.getElementById("name").value = p.name || "";
-  document.getElementById("price").value = p.price || "";
-  document.getElementById("description").value = p.description || "";
-
-  document.getElementById("formTitle").textContent = "Chỉnh sửa sản phẩm";
-  document.getElementById("saveBtn").textContent = "Cập nhật";
-  document.getElementById("cancelBtn").style.display = "inline-block";
-}
-
-// Reset form
 function resetForm() {
-  document.getElementById("productId").value = "";
-  document.getElementById("name").value = "";
-  document.getElementById("price").value = "";
-  document.getElementById("description").value = "";
-  document.getElementById("formTitle").textContent = "Thêm sản phẩm mới";
-  document.getElementById("saveBtn").textContent = "Thêm sản phẩm";
-  document.getElementById("cancelBtn").style.display = "none";
+    document.getElementById("id").value = "";
+    document.getElementById("name").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("stock").value = "";
+    document.getElementById("desc").value = "";
 }
-
-// Save / Update
-async function saveProduct() {
-  const id = document.getElementById("productId").value;
-  const name = document.getElementById("name").value.trim();
-  const price = document.getElementById("price").value;
-  const description = document.getElementById("description").value.trim();
-
-  if (!name || !price) return showAlert("Vui lòng nhập đầy đủ");
-
-  const dataSend = { name, price: Number(price), description };
-
-  const method = id ? "PUT" : "POST";
-  const url = id ? `${API_URL}/products/${id}` : `${API_URL}/products`;
-
-  const res = await fetch(url, {
-    method,
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    body: JSON.stringify(dataSend)
-  });
-
-  if (res.status === 401) return logout();
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    return showAlert(err.message || "Lỗi khi lưu sản phẩm");
-  }
-
-  showAlert(id ? "Cập nhật thành công!" : "Thêm thành công!", "success");
-  resetForm();
-  loadProducts();
-}
-
-// Delete sản phẩm
-async function deleteProduct(id) {
-  if (!confirm("Bạn có chắc muốn xoá?")) return;
-
-  const res = await fetch(`${API_URL}/products/${id}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
-  if (res.status === 401) return logout();
-
-  showAlert("Xóa thành công!", "success");
-  loadProducts();
-}
-
-checkAccess();
 </script>
 </body>
 </html>

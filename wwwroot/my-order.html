@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Đơn hàng của tôi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+    * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+    }
+    
+    body { 
+        font-family: 'Inter', sans-serif; 
+        padding: 30px; 
+        background: #F3F4F6;
+        color: #1F2937;
+    }
+    
+    .container { 
+        max-width: 800px; 
+        margin: 0 auto; 
+        background: white; 
+        padding: 30px; 
+        border-radius: 16px; 
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    h1 { 
+        margin-bottom: 20px; 
+        color: #4F46E5;
+        font-size: 24px;
+    }
+    
+    .btn-back { 
+        display: inline-block;
+        margin-bottom: 20px; 
+        text-decoration: none; 
+        color: #4F46E5;
+        font-weight: 600;
+        font-size: 14px;
+        transition: color 0.2s;
+    }
+    .btn-back:hover {
+        color: #4338CA;
+    }
+
+    .order-card { 
+        border: 1px solid #E5E7EB; 
+        padding: 15px; 
+        border-radius: 10px; 
+        margin-bottom: 15px; 
+        transition: box-shadow 0.2s;
+    }
+    .order-card:hover {
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .status { 
+        font-weight: bold; 
+        color: #F97316; 
+    }
+    
+    
+    .order-card div:first-child {
+        display: flex; 
+        justify-content: space-between; 
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .order-card p {
+        margin: 5px 0;
+        font-size: 14px;
+    }
+
+    .order-card hr {
+        margin: 10px 0; 
+        border: 0; 
+        border-top: 1px dashed #E5E7EB;
+    }
+
+    .order-card ul {
+        list-style: none;
+        padding-left: 0;
+    }
+    
+    .order-card ul li {
+        font-size: 13px;
+        color: #6B7280;
+        line-height: 1.6;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="order.html" class="btn-back">← Quay lại mua hàng</a>
+  <h1>Đơn hàng của tôi</h1>
+  <div id="list">Đang tải...</div>
+</div>
+
+<script>
+const API_URL = "https://localhost:5058/api";
+const token = localStorage.getItem("token");
+
+if(!token) location.href = "login.html";
+
+async function loadOrders() {
+    const res = await fetch(`${API_URL}/orders/my-orders`, {
+        headers: { "Authorization": `Bearer ${token}` }
+    });
+    
+    if(!res.ok) return document.getElementById("list").innerHTML = "Lỗi tải danh sách";
+    
+    const orders = await res.json();
+    if(orders.length === 0) return document.getElementById("list").innerHTML = "Chưa có đơn hàng nào.";
+
+    document.getElementById("list").innerHTML = orders.map(o => `
+        <div class="order-card">
+            <div style="display:flex; justify-content:space-between; font-weight:bold">
+                <span>Đơn hàng #${o.id}</span>
+                <span>${new Date(o.orderDate).toLocaleString()}</span>
+            </div>
+            <p>Trạng thái: <span class="status">${o.status}</span></p>
+            <p>Tổng tiền: <strong>${o.totalAmount.toLocaleString()}đ</strong></p>
+            <hr style="margin:10px 0; border:0; border-top:1px dashed #ddd">
+            <ul>
+                ${o.details.map(d => `<li>${d.productName} x ${d.quantity} (${d.unitPrice.toLocaleString()}đ)</li>`).join('')}
+            </ul>
+        </div>
+    `).join('');
+}
+
+loadOrders();
+</script>
+</body>
+</html>
