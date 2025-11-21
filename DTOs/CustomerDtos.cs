@@ -13,7 +13,7 @@ namespace MiniOrderManagement.DTOs
     }
 
     // Dùng để tạo mới hoặc cập nhật (POST/PUT)
-    public class CustomerCreateDto
+    public class CreateCustomerDto
     {
         [Required, MaxLength(100)]
         public string Name { get; set; }

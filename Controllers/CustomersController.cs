@@ -10,11 +10,12 @@ namespace MiniOrderManagement.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")] // Chỉ Admin mới được quản lý Customer
     public class CustomersController : ControllerBase
     {
         private readonly AppDbContext _db;
         private readonly IMapper _mapper;
+
         public CustomersController(AppDbContext db, IMapper mapper)
         {
             _db = db;
@@ -37,23 +38,30 @@ namespace MiniOrderManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CustomerCreateDto dto)
+        // Đã sửa thành CreateCustomerDto để khớp với file DTOs/CustomerDtos.cs
+        public async Task<IActionResult> Create([FromBody] CreateCustomerDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            
             var entity = _mapper.Map<Customer>(dto);
             _db.Customers.Add(entity);
             await _db.SaveChangesAsync();
+            
             return CreatedAtAction(nameof(Get), new { id = entity.Id }, _mapper.Map<CustomerDto>(entity));
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, [FromBody] CustomerCreateDto dto)
+        // Đã sửa thành CreateCustomerDto
+        public async Task<IActionResult> Update(int id, [FromBody] CreateCustomerDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            
             var c = await _db.Customers.FindAsync(id);
             if (c == null) return NotFound();
-            _mapper.Map(dto, c);
+            
+            _mapper.Map(dto, c); // Cập nhật dữ liệu từ DTO vào Entity
             await _db.SaveChangesAsync();
+            
             return Ok(_mapper.Map<CustomerDto>(c));
         }
 
@@ -62,8 +70,10 @@ namespace MiniOrderManagement.Controllers
         {
             var c = await _db.Customers.FindAsync(id);
             if (c == null) return NotFound();
+            
             _db.Customers.Remove(c);
             await _db.SaveChangesAsync();
+            
             return NoContent();
         }
     }
