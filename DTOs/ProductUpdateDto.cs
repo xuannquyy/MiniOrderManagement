@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MiniOrderManagement.DTOs
 {
-    public class UpdateProductDto
+    public class ProductUpdateDto
     {
         [Required]
         public string? Name { get; set; }

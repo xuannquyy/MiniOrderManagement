@@ -5,19 +5,22 @@ namespace MiniOrderManagement.Models
 {
     public class Order
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]
-        public string CustomerId { get; set; } // link to Identity user id for real customers (string)
+        public string UserId { get; set; } = string.Empty; // Liên kết với bảng User của Identity
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime OrderDate { get; set; } = DateTime.Now;
 
-        [Required, MaxLength(50)]
-        public string Status { get; set; } = "Pending";
+        [Required]
+        [MaxLength(20)]
+        public string Status { get; set; } = "Pending"; // Pending, Completed, Cancelled
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Total { get; set; }
+        public decimal TotalAmount { get; set; }
 
+        // Navigation property
         public List<OrderDetail> OrderDetails { get; set; } = new();
     }
 }
