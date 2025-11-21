@@ -178,8 +178,11 @@ button:hover {
 </div>
 
 <script>
-// ĐỔI DÒNG NÀY THEO PORT BACKEND 
+
 const API_URL = "https://localhost:5058/api";
+
+
+// HIỂN THỊ THÔNG BÁO
 
 function showMsg(text, type = "error") {
   const msg = document.getElementById('message');
@@ -187,7 +190,8 @@ function showMsg(text, type = "error") {
   setTimeout(() => msg.innerHTML = "", 5000);
 }
 
-document.getElementById("loginForm").onsubmit = async function(e) {
+
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
   e.preventDefault();
 
   const email = document.getElementById('email').value.trim();
@@ -205,23 +209,28 @@ document.getElementById("loginForm").onsubmit = async function(e) {
       body: JSON.stringify({ email, password })
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-      const error = await res.json().catch(() => ({}));
-      throw new Error(error.message || error.title || "Email hoặc mật khẩu không đúng");
+      showMsg(data.message || "Email hoặc mật khẩu không đúng");
+      return;
     }
 
-    const data = await res.json();
-    const token = data.token || data.accessToken || data.access_token;
-    if (!token) throw new Error("Không nhận được token từ server");
+    // Token
+    const token = data.token || data.accessToken;
+    if (!token) {
+      showMsg("Không nhận được token từ server");
+      return;
+    }
 
+    // Lưu localStorage
     localStorage.setItem("token", token);
-    localStorage.setItem("userEmail", email);
+    localStorage.setItem("role", data.role?.toLowerCase() || "");
 
     showMsg("Đăng nhập thành công! Đang chuyển hướng...", "success");
 
     setTimeout(() => {
-      const role = (data.role || data.user?.role || data.Role || "").toLowerCase();
-      if (role.includes("admin")) {
+      if ((data.role || "").toLowerCase() === "admin") {
         location.href = "admin.html";
       } else {
         location.href = "order.html";
@@ -229,9 +238,9 @@ document.getElementById("loginForm").onsubmit = async function(e) {
     }, 1200);
 
   } catch (err) {
-    showMsg(err.message || "Đã có lỗi xảy ra, vui lòng thử lại");
+    showMsg("Không thể kết nối server");
   }
-};
+});
 </script>
 </body>
 </html>
