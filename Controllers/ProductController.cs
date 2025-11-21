@@ -1,117 +1,80 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MiniOrderManagement.Data;
 using MiniOrderManagement.DTOs;
 using MiniOrderManagement.Models;
 
-namespace YourProject.Controllers
+namespace MiniOrderManagement.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    [Route("api/[controller]")]
+    public class ProductsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _db;
+        private readonly IMapper _mapper;
 
-        public ProductController(AppDbContext context)
+        public ProductsController(ApplicationDbContext db, IMapper mapper)
         {
-            _context = context;
+            _db = db;
+            _mapper = mapper;
         }
 
-        // GET /api/products
+        // GET: api/products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAll()
         {
-            var products = await _context.Products.ToListAsync();
-
-            return Ok(products.Select(p => new ProductDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                Stock = p.Stock
-            }));
+            var list = await _db.Products.ToListAsync();
+            return Ok(_mapper.Map<List<ProductDto>>(list));
         }
 
-        // GET /api/products/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDto>> GetProduct(int id)
+        // GET: api/products/5
+        [HttpGet("{id:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Get(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-
-            if (product == null)
-                return NotFound();
-
-            return Ok(new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Stock = product.Stock
-            });
+            var p = await _db.Products.FindAsync(id);
+            if (p == null) return NotFound();
+            return Ok(_mapper.Map<ProductDto>(p));
         }
 
-        // POST /api/products (Admin)
+        // POST: api/products
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> CreateProduct(CreateProductDto dto)
+        public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var product = new Product
-            {
-                Name = dto.Name,
-                Description = dto.Description,
-                Price = dto.Price,
-                Stock = dto.Stock
-            };
-
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var prod = _mapper.Map<Product>(dto);
+            _db.Products.Add(prod);
+            await _db.SaveChangesAsync();
+            var result = _mapper.Map<ProductDto>(prod);
+            return CreatedAtAction(nameof(Get), new { id = prod.Id }, result);
         }
 
-        // PUT /api/products/{id} (Admin)
-        [HttpPut("{id}")]
+        // PUT: api/products/5
+        [HttpPut("{id:int}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> UpdateProduct(int id, UpdateProductDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] ProductCreateDto dto)
         {
-            if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-            if (dto.Price < 0 || dto.Stock < 0)
-            return BadRequest("Price và Stock phải >= 0");
-
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            return NotFound();
-
-            product.Name = dto.Name;
-            product.Description = dto.Description;
-            product.Price = dto.Price;
-            product.Stock = dto.Stock;
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var prod = await _db.Products.FindAsync(id);
+            if (prod == null) return NotFound();
+            _mapper.Map(dto, prod);
+            await _db.SaveChangesAsync();
+            return Ok(_mapper.Map<ProductDto>(prod));
         }
 
-        // DELETE /api/products/{id} (Admin)
-        [HttpDelete("{id}")]
+        // DELETE: api/products/5
+        [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-                return NotFound();
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-
+            var prod = await _db.Products.FindAsync(id);
+            if (prod == null) return NotFound();
+            _db.Products.Remove(prod);
+            await _db.SaveChangesAsync();
             return NoContent();
         }
     }
