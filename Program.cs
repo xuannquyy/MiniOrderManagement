@@ -7,6 +7,7 @@ using MiniOrderManagement.Data;
 using MiniOrderManagement.Mappings;
 using MiniOrderManagement.Services;
 using System.Text;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
