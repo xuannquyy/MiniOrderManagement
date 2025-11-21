@@ -12,10 +12,10 @@ namespace MiniOrderManagement.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly ApplicationDbContext _db;
+        private readonly AppDbContext _db;
         private readonly IMapper _mapper;
 
-        public ProductsController(ApplicationDbContext db, IMapper mapper)
+        public ProductsController(AppDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
