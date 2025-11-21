@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký - MiniOrder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 1. Global Reset --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F3F4F6;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111;
+        }
+
+        /* --- 2. Container --- */
+        .register-box {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .register-box h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        /* --- 3. Form Elements --- */
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        input:focus {
+            border-color: #4F46E5;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            /* Đã đổi màu từ Xanh lá sang Tím để đồng bộ với Login */
+            background: #4F46E5; 
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background: #4338CA; /* Màu đậm hơn khi di chuột */
+        }
+
+        button:disabled {
+            background: #A5B4FC;
+            cursor: not-allowed;
+        }
+
+        /* --- 4. Utility & Text --- */
+        .message {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #DC2626;
+            min-height: 20px;
+        }
+
+        .link {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #6B7280;
+        }
+
+        .link a {
+            color: #4F46E5;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-box">
+    <h1>Đăng ký tài khoản</h1>
+    <form id="registerForm">
+        <input type="email" id="email" required placeholder="Email">
+        <input type="password" id="pass" required placeholder="Mật khẩu (Min 6 ký tự)">
+        <button type="submit" id="btnRegister">Đăng ký</button>
+    </form>
+    
+    <div id="msg" class="message"></div>
+    
+    <div class="link">
+        Đã có tài khoản? <a href="login.html">Đăng nhập</a>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://localhost:5058/api";
+
+    document.getElementById("registerForm").addEventListener("submit", async function(e) {
+        e.preventDefault(); // Ngăn load lại trang
+        
+        const btn = document.getElementById('btnRegister');
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('pass').value;
+        const msg = document.getElementById('msg');
+
+        // Reset trạng thái
+        msg.textContent = "";
+        btn.disabled = true;
+        btn.textContent = "Đang đăng ký...";
+
+        try {
+            const res = await fetch(`${API_URL}/auth/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+            
+            if(res.ok) {
+                alert("Đăng ký thành công! Vui lòng đăng nhập.");
+                window.location.href = "login.html";
+            } else {
+                const err = await res.json();
+                // Xử lý lỗi trả về từ ASP.NET Identity (thường là mảng lỗi)
+                const errText = Array.isArray(err) ? err[0].description : "Đăng ký thất bại";
+                msg.textContent = errText;
+                
+                // Reset nút nếu lỗi
+                btn.disabled = false;
+                btn.textContent = "Đăng ký";
+            }
+        } catch (error) {
+            msg.textContent = "Lỗi kết nối server!";
+            btn.disabled = false;
+            btn.textContent = "Đăng ký";
+        }
+    });
+</script>
+
+</body>
+</html>
