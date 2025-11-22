@@ -91,7 +91,6 @@ namespace MiniOrderManagement.Services
             return MapToDto(orders);
         }
 
-        // Helper function map tay (hoặc dùng AutoMapper nếu em thạo)
         private List<OrderDto> MapToDto(List<Order> orders)
         {
             return orders.Select(o => new OrderDto

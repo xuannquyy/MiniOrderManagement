@@ -12,7 +12,7 @@ namespace MiniOrderManagement.Mappings
             CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<CreateProductDto, Product>(); // Map từ DTO tạo mới sang Entity
 
-            // 2. Customer Mappings (Chú ý tên class mới: CreateCustomerDto)
+            // 2. Customer Mappings 
             CreateMap<Customer, CustomerDto>().ReverseMap();
             CreateMap<CreateCustomerDto, Customer>(); 
 

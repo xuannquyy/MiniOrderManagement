@@ -38,7 +38,6 @@ namespace MiniOrderManagement.Controllers
         }
 
         [HttpPost]
-        // Đã sửa thành CreateCustomerDto để khớp với file DTOs/CustomerDtos.cs
         public async Task<IActionResult> Create([FromBody] CreateCustomerDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -51,7 +50,6 @@ namespace MiniOrderManagement.Controllers
         }
 
         [HttpPut("{id:int}")]
-        // Đã sửa thành CreateCustomerDto
         public async Task<IActionResult> Update(int id, [FromBody] CreateCustomerDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);

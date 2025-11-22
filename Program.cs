@@ -47,9 +47,6 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
-// Services
-builder.Services.AddScoped<IOrderService, OrderService>();
-
 builder.Services.AddControllers();
 
 // 5. Cấu hình Swagger để test Token (Quan trọng để test API)
