@@ -8,16 +8,23 @@ namespace MiniOrderManagement.Mappings
     {
         public AutoMapperProfile()
         {
+            // 1. Product Mappings
             CreateMap<Product, ProductDto>().ReverseMap();
-            CreateMap<ProductCreateDto, Product>();
+            CreateMap<CreateProductDto, Product>(); // Map từ DTO tạo mới sang Entity
 
+            // 2. Customer Mappings (Chú ý tên class mới: CreateCustomerDto)
             CreateMap<Customer, CustomerDto>().ReverseMap();
-            CreateMap<CustomerCreateDto, Customer>();
+            CreateMap<CreateCustomerDto, Customer>(); 
 
+            // 3. Order Mappings
+            // Map Order -> OrderDto
             CreateMap<Order, OrderDto>()
                 .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.OrderDetails));
+
+            // Map OrderDetail -> OrderDetailDto
             CreateMap<OrderDetail, OrderDetailDto>()
-                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.PriceAtOrder));
         }
     }
 }

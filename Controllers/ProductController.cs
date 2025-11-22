@@ -22,8 +22,8 @@ namespace MiniOrderManagement.Controllers
         }
 
         // GET: api/products
+        // Ai cũng xem được (kể cả chưa đăng nhập)
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         {
             var list = await _db.Products.ToListAsync();
@@ -32,7 +32,6 @@ namespace MiniOrderManagement.Controllers
 
         // GET: api/products/5
         [HttpGet("{id:int}")]
-        [AllowAnonymous]
         public async Task<IActionResult> Get(int id)
         {
             var p = await _db.Products.FindAsync(id);
@@ -41,40 +40,50 @@ namespace MiniOrderManagement.Controllers
         }
 
         // POST: api/products
+        // Chỉ Admin mới được tạo
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] ProductCreateDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateProductDto dto) // <-- Đã sửa thành CreateProductDto
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            
             var prod = _mapper.Map<Product>(dto);
             _db.Products.Add(prod);
             await _db.SaveChangesAsync();
+            
             var result = _mapper.Map<ProductDto>(prod);
             return CreatedAtAction(nameof(Get), new { id = prod.Id }, result);
         }
 
         // PUT: api/products/5
+        // Chỉ Admin mới được sửa
         [HttpPut("{id:int}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(int id, [FromBody] ProductCreateDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] CreateProductDto dto) // <-- Đã sửa thành CreateProductDto
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            
             var prod = await _db.Products.FindAsync(id);
             if (prod == null) return NotFound();
-            _mapper.Map(dto, prod);
+            
+            _mapper.Map(dto, prod); // Update dữ liệu
             await _db.SaveChangesAsync();
+            
             return Ok(_mapper.Map<ProductDto>(prod));
         }
 
         // DELETE: api/products/5
+        // Chỉ Admin mới được xóa
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var prod = await _db.Products.FindAsync(id);
             if (prod == null) return NotFound();
+            
             _db.Products.Remove(prod);
             await _db.SaveChangesAsync();
+            
             return NoContent();
         }
     }
