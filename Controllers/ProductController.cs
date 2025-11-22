@@ -43,7 +43,7 @@ namespace MiniOrderManagement.Controllers
         // Chỉ Admin mới được tạo
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] CreateProductDto dto) // <-- Đã sửa thành CreateProductDto
+        public async Task<IActionResult> Create([FromBody] CreateProductDto dto) 
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             
@@ -59,7 +59,7 @@ namespace MiniOrderManagement.Controllers
         // Chỉ Admin mới được sửa
         [HttpPut("{id:int}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(int id, [FromBody] CreateProductDto dto) // <-- Đã sửa thành CreateProductDto
+        public async Task<IActionResult> Update(int id, [FromBody] CreateProductDto dto) 
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             
