@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập - MiniOrder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F3F4F6;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .login-box h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #111;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        input:focus {
+            border-color: #4F46E5;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #4F46E5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background: #4338CA;
+        }
+
+        button:disabled {
+            background: #A5B4FC;
+            cursor: not-allowed;
+        }
+
+        
+        .message {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #DC2626;
+            min-height: 20px; 
+        }
+
+        .link {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #6B7280;
+        }
+
+        .link a {
+            color: #4F46E5;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <h1>Đăng nhập</h1>
+    <form id="loginForm">
+        <input type="email" id="email" required placeholder="Email (VD: admin@mini.local)">
+        <input type="password" id="password" required placeholder="Mật khẩu">
+        <button type="submit" id="btnSubmit">Đăng nhập</button>
+    </form>
+    
+    <div class="message" id="message"></div>
+    
+    <div class="link">
+        Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://localhost:5058/api"; 
+
+    function showMsg(text) { 
+        document.getElementById('message').textContent = text; 
+    }
+
+    // Hàm giải mã JWT để lấy thông tin bên trong
+    function parseJwt(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (e) { return null; }
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnSubmit');
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        // UI Loading state
+        btn.disabled = true; 
+        btn.textContent = "Đang xử lý...";
+        showMsg(""); // Clear old message
+
+        try {
+            const res = await fetch(`${API_URL}/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (!res.ok) {
+                throw new Error("Sai email hoặc mật khẩu!");
+            }
+
+            const data = await res.json();
+            const token = data.token;
+            localStorage.setItem("token", token);
+
+            // Giải mã token để xem Role
+            const decoded = parseJwt(token);
+            const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || decoded["role"];
+
+            showMsg("Đăng nhập thành công!");
+            
+            setTimeout(() => {
+                if (role === "Admin") location.href = "admin.html";
+                else location.href = "order.html";
+            }, 1000);
+
+        } catch (err) {
+            btn.disabled = false; 
+            btn.textContent = "Đăng nhập";
+            showMsg(err.message || "Lỗi kết nối server!");
+        }
+    });
+</script>
+
+</body>
+</html>
