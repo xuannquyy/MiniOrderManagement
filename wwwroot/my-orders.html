@@ -96,7 +96,7 @@
 </head>
 <body>
 <div class="container">
-  <a href="order.html" class="btn-back">← Quay lại mua hàng</a>
+  <a href="orders.html" class="btn-back">← Quay lại mua hàng</a>
   <h1>Đơn hàng của tôi</h1>
   <div id="list">Đang tải...</div>
 </div>
@@ -108,7 +108,7 @@ const token = localStorage.getItem("token");
 if(!token) location.href = "login.html";
 
 async function loadOrders() {
-    const res = await fetch(`${API_URL}/order/my-order`, {
+    const res = await fetch(`${API_URL}/orders/my-orders`, {
         headers: { "Authorization": `Bearer ${token}` }
     });
     

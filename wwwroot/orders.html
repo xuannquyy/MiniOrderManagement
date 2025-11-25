@@ -160,7 +160,7 @@
   <header>
     <h1><i class="fa-solid fa-store"></i> Mua sắm</h1>
     <div>
-      <a href="my-order.html" class="btn btn-outline" id="historyBtn" style="display:none"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử đơn</a>
+      <a href="my-orders.html" class="btn btn-outline" id="historyBtn" style="display:none"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử đơn</a>
       <a href="admin.html" class="btn btn-outline" id="adminBtn" style="display:none"><i class="fa-solid fa-screwdriver-wrench"></i> Trang Admin</a>
       <button id="authBtn" class="btn" onclick="handleAuth()"><i class="fa-solid fa-user-circle"></i> Đăng nhập</button>
     </div>
@@ -260,7 +260,7 @@ async function checkout() {
         }))
     };
 
-    const res = await fetch(`${API_URL}/order`, {
+    const res = await fetch(`${API_URL}/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify(payload)
@@ -272,7 +272,7 @@ async function checkout() {
         cart = []; renderCart();
         // Cần đảm bảo loadProducts() được gọi lại để cập nhật Stock
         loadProducts(); 
-        location.href = "my-order.html"; // Chuyển sang trang lịch sử
+        location.href = "my-orders.html"; // Chuyển sang trang lịch sử
     } else {
         const err = await res.json();
         const errorMessage = (err.message || (Array.isArray(err) && err[0]) || "Có gì đó sai sai").toString();
