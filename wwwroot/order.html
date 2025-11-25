@@ -260,7 +260,7 @@ async function checkout() {
         }))
     };
 
-    const res = await fetch(`${API_URL}/orders`, {
+    const res = await fetch(`${API_URL}/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify(payload)

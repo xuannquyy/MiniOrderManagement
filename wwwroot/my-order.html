@@ -108,7 +108,7 @@ const token = localStorage.getItem("token");
 if(!token) location.href = "login.html";
 
 async function loadOrders() {
-    const res = await fetch(`${API_URL}/orders/my-orders`, {
+    const res = await fetch(`${API_URL}/order/my-order`, {
         headers: { "Authorization": `Bearer ${token}` }
     });
     
