@@ -2,7 +2,7 @@
 Dự án xây dựng hệ thống quản lý đơn hàng mini (Mini Order Management) áp dụng kiến trúc RESTful API, phân quyền JWT 
 * Tính năng chính
 1. Back-end (.NET Core API)
-- bAuthentication & Authorization: Đăng ký, Đăng nhập, Phân quyền (Admin/User) sử dụng JWT.
+- Authentication & Authorization: Đăng ký, Đăng nhập, Phân quyền (Admin/User) sử dụng JWT.
 - Quản lý Sản phẩm (CRUD): Chỉ Admin được phép Thêm, Sửa, Xóa.
 -  Quản lý Đơn hàng:
      + User: Tạo đơn hàng, Xem lịch sử đơn hàng của cá nhân.
