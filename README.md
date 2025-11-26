@@ -1,6 +1,6 @@
-#Mini Order Management System
+# Mini Order Management System
 Dự án xây dựng hệ thống quản lý đơn hàng mini (Mini Order Management) áp dụng kiến trúc RESTful API, phân quyền JWT 
-* Tính năng chính
+# Tính năng chính
 1. Back-end (.NET Core API)
 - Authentication & Authorization: Đăng ký, Đăng nhập, Phân quyền (Admin/User) sử dụng JWT.
 - Quản lý Sản phẩm (CRUD): Chỉ Admin được phép Thêm, Sửa, Xóa.
@@ -21,8 +21,8 @@ Dự án xây dựng hệ thống quản lý đơn hàng mini (Mini Order Manage
 - DB: SQL Server.
 - Tools: Visual Studio code, Swagger UI.
 3. Hướng dẫn cài đặt & Chạy
-* PHẦN 1: BACK-END (API & DATABASE)
-- Cấu hình Database
+~ PHẦN 1: BACK-END (API & DATABASE)
+* Cấu hình Database
     + Mở file appsettings.json trong project Backend.
     + Tìm đoạn ConnectionStrings.
     + Sửa lại Server=... cho phù hợp với tên SQL Server của máy bạn.
@@ -32,9 +32,8 @@ Ví dụ: Server=.\\SQLEXPRESS;Database=MiniOrderDb;Trusted_Connection=True;Mult
         --> Nhấn F5 hoặc dotnet run để khởi chạy.
 Lưu ý: Hệ thống tự động chạy Migration và tạo Admin/User mặc định.
 Khi trình duyệt bật lên trang Swagger, copy đường dẫn API (Ví dụ: https://localhost:7288) để dùng cho phần Frontend.
-3. Test API với Swagger (Lấy Token)
-* Hệ thống tích hợp sẵn Swagger UI để test API trực quan. Dưới đây là cách lấy Token để test các API có khóa bảo mật 🔒.
-- Lấy Token (Đăng nhập):
+* Test API với Swagger (Lấy Token)
+- Lấy Token (Đăng nhập):là cách lấy Token để test các API có khóa bảo mật 🔒.
 + Tìm API POST /api/Auth/login -> Nhấn Try it out.
 + Nhập JSON tài khoản Admin (admin@mini.local / Admin@123).
 + Nhấn Execute.
@@ -44,7 +43,7 @@ Khi trình duyệt bật lên trang Swagger, copy đường dẫn API (Ví dụ:
 + Nhập vào ô Value: Bearer <dán_token_vừa_copy>. (Lưu ý dấu cách).
 + Nhấn Authorize -> Close.
 --> Bây giờ bạn có thể gọi các API bị khóa.
- PHẦN 2: FRONT-END (WEB APP)
+~ PHẦN 2: FRONT-END (WEB APP)
 --> Lưu ý: Đảm bảo Back-end đang chạy trước khi thực hiện phần này.
 * Cách chạy 1: Môi trường Dev (Visual Studio + Live Server)
 - Dùng khi đang phát triển hoặc sửa lỗi.
