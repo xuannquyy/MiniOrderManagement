@@ -59,7 +59,7 @@ Khi trình duyệt bật lên trang Swagger, copy đường dẫn API (Ví dụ:
 - Triển khai IIS:
 + Publish code Backend ra thư mục (Ví dụ C:\Deploy).
 + Tạo Website mới trên IIS trỏ về thư mục đó.
-+ Binding: Host name: MiniOrderAPI.com, Port: 80
++ Binding: Host name: MiniOrderAPI.com, Port: 7288
 + App Pool: Chuyển Identity sang LocalSystem (để kết nối SQL).
 - Chạy:
 + Mở trình duyệt truy cập: http://MiniOrderAPI.com/login.html

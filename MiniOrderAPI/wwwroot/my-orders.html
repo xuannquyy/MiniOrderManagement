@@ -96,13 +96,13 @@
 </head>
 <body>
 <div class="container">
-  <a href="order.html" class="btn-back">← Quay lại mua hàng</a>
+  <a href="orders.html" class="btn-back">← Quay lại mua hàng</a>
   <h1>Đơn hàng của tôi</h1>
   <div id="list">Đang tải...</div>
 </div>
 
 <script>
-const API_URL = "https://localhost:5058/api";
+const API_URL = "/api";
 const token = localStorage.getItem("token");
 
 if(!token) location.href = "login.html";
